@@ -130,12 +130,6 @@ SqlConnection::SqlConnection(const char* user, const char* passwd, const char* h
     // }
 }
 
-/************************************************************************
- *                                                                        *
- *                                                                        *
- *                                                                        *
- ************************************************************************/
-
 SqlConnection::~SqlConnection()
 {
     TracyZoneScoped;
@@ -147,12 +141,6 @@ SqlConnection::~SqlConnection()
         delete self;
     }
 }
-
-/************************************************************************
- *                                                                        *
- *  Retrieves the timeout of the connection.                              *
- *                                                                        *
- ************************************************************************/
 
 int32 SqlConnection::GetTimeout(uint32* out_timeout)
 {
@@ -173,13 +161,6 @@ int32 SqlConnection::GetTimeout(uint32* out_timeout)
     ShowFatalError("GetTimeout: SQL_ERROR: %s (%u)", mysql_error(&self->handle), mysql_errno(&self->handle));
     return SQL_ERROR;
 }
-
-/************************************************************************
- *                                                                        *
- *  Retrieves the name of the columns of a table into out_buf, with       *
- *  the separator after each name.                                        *
- *                                                                        *
- ************************************************************************/
 
 int32 SqlConnection::GetColumnNames(const char* table, char* out_buf, size_t buf_len, char sep)
 {
@@ -211,12 +192,6 @@ int32 SqlConnection::GetColumnNames(const char* table, char* out_buf, size_t buf
     FreeResult();
     return SQL_SUCCESS;
 }
-
-/************************************************************************
- *                                                                        *
- *  Changes the encoding of the connection.                               *
- *                                                                        *
- ************************************************************************/
 
 int32 SqlConnection::SetEncoding(const char* encoding)
 {
@@ -250,12 +225,6 @@ void SqlConnection::SetupKeepalive()
     uint8 reserve  = 30;
     m_PingInterval = timeout + reserve;
 }
-
-/************************************************************************
- *                                                                        *
- *  Pings the connection.                                                 *
- *                                                                        *
- ************************************************************************/
 
 int32 SqlConnection::TryPing()
 {
@@ -296,12 +265,6 @@ int32 SqlConnection::TryPing()
     return SQL_ERROR;
 }
 
-/************************************************************************
- *                                                                        *
- *  Escapes a string.                                                     *
- *                                                                        *
- ************************************************************************/
-
 size_t SqlConnection::EscapeStringLen(char* out_to, const char* from, size_t from_len)
 {
     TracyZoneScoped;
@@ -312,23 +275,11 @@ size_t SqlConnection::EscapeStringLen(char* out_to, const char* from, size_t fro
     return mysql_escape_string(out_to, from, (uint32)from_len);
 }
 
-/************************************************************************
- *                                                                        *
- *  Escapes a string.                                                     *
- *                                                                        *
- ************************************************************************/
-
 size_t SqlConnection::EscapeString(char* out_to, const char* from)
 {
     TracyZoneScoped;
     return EscapeStringLen(out_to, from, strlen(from));
 }
-
-/************************************************************************
- *                                                                        *
- *  Executes a query.                                                     *
- *                                                                        *
- ************************************************************************/
 
 int32 SqlConnection::QueryStr(const char* query)
 {
@@ -368,7 +319,7 @@ int32 SqlConnection::QueryStr(const char* query)
     }
 
     auto endTime = hires_clock::now();
-    auto dTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+    auto dTime   = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
     if (m_LatencyWarning)
     {
         if (dTime > 250ms)
@@ -384,12 +335,6 @@ int32 SqlConnection::QueryStr(const char* query)
     return SQL_SUCCESS;
 }
 
-/************************************************************************
- *                                                                        *
- *                                                                        *
- *                                                                        *
- ************************************************************************/
-
 uint64 SqlConnection::AffectedRows()
 {
     TracyZoneScoped;
@@ -399,13 +344,6 @@ uint64 SqlConnection::AffectedRows()
     }
     return 0;
 }
-
-/************************************************************************
- *                                                                        *
- *  Returns the number of the AUTO_INCREMENT column of the last           *
- *  INSERT/UPDATE query.                                                  *
- *                                                                        *
- ************************************************************************/
 
 uint64 SqlConnection::LastInsertId()
 {
@@ -417,12 +355,6 @@ uint64 SqlConnection::LastInsertId()
     return 0;
 }
 
-/************************************************************************
- *                                                                        *
- *  Returns the number of columns in each row of the result.              *
- *                                                                        *
- ************************************************************************/
-
 uint32 SqlConnection::NumColumns()
 {
     TracyZoneScoped;
@@ -433,12 +365,6 @@ uint32 SqlConnection::NumColumns()
     return 0;
 }
 
-/************************************************************************
- *                                                                        *
- *  Returns the number of rows in the result.                             *
- *                                                                        *
- ************************************************************************/
-
 uint64 SqlConnection::NumRows()
 {
     TracyZoneScoped;
@@ -448,12 +374,6 @@ uint64 SqlConnection::NumRows()
     }
     return 0;
 }
-
-/************************************************************************
- *                                                                        *
- *  Fetches the next row.                                                 *
- *                                                                        *
- ************************************************************************/
 
 int32 SqlConnection::NextRow()
 {
@@ -476,12 +396,6 @@ int32 SqlConnection::NextRow()
     ShowFatalError("NextRow: SQL_ERROR: %s (%u)", mysql_error(&self->handle), mysql_errno(&self->handle));
     return SQL_ERROR;
 }
-
-/************************************************************************
- *                                                                        *
- *  Gets the data of a column.                                            *
- *                                                                        *
- ************************************************************************/
 
 int32 SqlConnection::GetData(size_t col, char** out_buf, size_t* out_len)
 {
@@ -517,12 +431,6 @@ int32 SqlConnection::GetData(size_t col, char** out_buf, size_t* out_len)
     return SQL_ERROR;
 }
 
-/************************************************************************
- *                                                                        *
- *                                                                        *
- *                                                                        *
- ************************************************************************/
-
 int8* SqlConnection::GetData(size_t col)
 {
     TracyZoneScoped;
@@ -537,12 +445,6 @@ int8* SqlConnection::GetData(size_t col)
     ShowFatalError("GetData: SQL_ERROR: %s (%u)", mysql_error(&self->handle), mysql_errno(&self->handle));
     return nullptr;
 }
-
-/************************************************************************
- *                                                                        *
- *                                                                        *
- *                                                                        *
- ************************************************************************/
 
 int32 SqlConnection::GetIntData(size_t col)
 {
@@ -559,12 +461,6 @@ int32 SqlConnection::GetIntData(size_t col)
     return 0;
 }
 
-/************************************************************************
- *                                                                        *
- *                                                                        *
- *                                                                        *
- ************************************************************************/
-
 uint32 SqlConnection::GetUIntData(size_t col)
 {
     TracyZoneScoped;
@@ -579,12 +475,6 @@ uint32 SqlConnection::GetUIntData(size_t col)
     ShowFatalError("GetUIntData: SQL_ERROR: %s (%u)", mysql_error(&self->handle), mysql_errno(&self->handle));
     return 0;
 }
-
-/************************************************************************
- *                                                                        *
- *                                                                        *
- *                                                                        *
- ************************************************************************/
 
 uint64 SqlConnection::GetUInt64Data(size_t col)
 {
@@ -601,12 +491,6 @@ uint64 SqlConnection::GetUInt64Data(size_t col)
     return 0;
 }
 
-/************************************************************************
- *                                                                        *
- *                                                                        *
- *                                                                        *
- ************************************************************************/
-
 float SqlConnection::GetFloatData(size_t col)
 {
     TracyZoneScoped;
@@ -621,12 +505,6 @@ float SqlConnection::GetFloatData(size_t col)
     ShowFatalError("GetFloatData: SQL_ERROR: %s (%u)", mysql_error(&self->handle), mysql_errno(&self->handle));
     return 0;
 }
-
-/************************************************************************
- *                                                                        *
- *                                                                        *
- *                                                                        *
- ************************************************************************/
 
 std::string SqlConnection::GetStringData(size_t col)
 {
@@ -643,12 +521,6 @@ std::string SqlConnection::GetStringData(size_t col)
     return "";
 }
 
-/************************************************************************
- *                                                                        *
- *  Frees the result of the query.                                        *
- *                                                                        *
- ************************************************************************/
-
 void SqlConnection::FreeResult()
 {
     TracyZoneScoped;
@@ -660,12 +532,6 @@ void SqlConnection::FreeResult()
         self->lengths = nullptr;
     }
 }
-
-/************************************************************************
- *                                                                        *
- *                                                                        *
- *                                                                        *
- ************************************************************************/
 
 bool SqlConnection::SetAutoCommit(bool value)
 {
@@ -682,12 +548,6 @@ bool SqlConnection::SetAutoCommit(bool value)
     ShowFatalError("SetAutoCommit: SQL_ERROR: %s (%u)", mysql_error(&self->handle), mysql_errno(&self->handle));
     return false;
 }
-
-/************************************************************************
- *                                                                        *
- *                                                                        *
- *                                                                        *
- ************************************************************************/
 
 bool SqlConnection::GetAutoCommit()
 {
@@ -707,12 +567,6 @@ bool SqlConnection::GetAutoCommit()
     return false;
 }
 
-/************************************************************************
- *                                                                        *
- *                                                                        *
- *                                                                        *
- ************************************************************************/
-
 bool SqlConnection::TransactionStart()
 {
     TracyZoneScoped;
@@ -726,12 +580,6 @@ bool SqlConnection::TransactionStart()
     return false;
 }
 
-/************************************************************************
- *                                                                        *
- *                                                                        *
- *                                                                        *
- ************************************************************************/
-
 bool SqlConnection::TransactionCommit()
 {
     TracyZoneScoped;
@@ -744,12 +592,6 @@ bool SqlConnection::TransactionCommit()
     ShowFatalError("TransactionCommit: SQL_ERROR: %s (%u)", mysql_error(&self->handle), mysql_errno(&self->handle));
     return false;
 }
-
-/************************************************************************
- *                                                                        *
- *                                                                        *
- *                                                                        *
- ************************************************************************/
 
 bool SqlConnection::TransactionRollback()
 {
