@@ -768,7 +768,7 @@ std::vector<std::string> split(std::string const& s, std::string const& delimite
 }
 
 // https://stackoverflow.com/questions/313970/how-to-convert-an-instance-of-stdstring-to-lower-case
-std::string trim(const std::string& str, const std::string& whitespace)
+std::string trim(std::string const& str, std::string const& whitespace)
 {
     const auto strBegin = str.find_first_not_of(whitespace);
     if (strBegin == std::string::npos)
